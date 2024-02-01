@@ -22,3 +22,16 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+
+# Ignore .vscode
+.vscode/
+
+# Ignore META-INF
+/target/classes/META-INF/persistence.xml
+
+# Ignore Maven
+/target/maven-archiver
+/target/maven-status
+
+# Ignore .bkp Draw.io
+.$uml.drawio.bkp
