@@ -16,10 +16,20 @@ public class ProductDAO {
 
     private EntityManagerFactory emf;
 
+    /**
+     * Constructor that creates the EntityManagerFactory
+     */
     public ProductDAO() {
         this.emf = Persistence.createEntityManagerFactory("mpu");
     }
 
+    /**
+     * Persists the object in the database and returns it with the
+     * auto-incrementable id created by the database.
+     * 
+     * @param product object that will be saved in the database
+     * @return the object persisted in the database
+     */
     public Product save(Product product) {
         try {
             EntityManager em = emf.createEntityManager();
@@ -34,6 +44,12 @@ public class ProductDAO {
         return product;
     }
 
+     /**
+     * Returns a list of all products stored in the database, or an error message
+     * with stack trace if an error occurs in the sql query
+     * 
+     * @return the list of all products stored in the database
+     */
     public List<Product> list() {
         EntityManager em = emf.createEntityManager();
         List<Product> products = new ArrayList<>();
@@ -52,6 +68,12 @@ public class ProductDAO {
         return products;
     }
 
+    /**
+     * Returns a product by its id
+     * 
+     * @param id the id of the product
+     * @return the product with the given id, or null if the product was not found
+     */
     public Product findById(Integer id) {
         EntityManager em = emf.createEntityManager();
         Product product = new Product();
@@ -72,6 +94,12 @@ public class ProductDAO {
         return product;
     }
 
+     /**
+     * Returns a product by its name
+     * 
+     * @param name the name of the product
+     * @return the product with the given name, or null if the product was not found
+     */
     public Product findByName(String name) {
         EntityManager em = emf.createEntityManager();
         Product product;
@@ -91,6 +119,13 @@ public class ProductDAO {
         }
     }
 
+     /**
+     * Updates a product in the database
+     * 
+     * @param id the id of the product that will be updated
+     * @param updatedProduct the new product data
+     * @return the updated product
+     */
     public Product update(Integer id, ProductDTO updatedProduct) {
         EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();
@@ -107,6 +142,12 @@ public class ProductDAO {
         return product;
     }
 
+    /**
+     * Deletes a product from the database
+     * 
+     * @param id the id of the product that will be deleted
+     * @return true if the product was deleted, false if the product was not found
+     */
     public boolean delete(Integer id) {
         EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();
