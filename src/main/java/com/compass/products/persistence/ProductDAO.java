@@ -44,13 +44,7 @@ public class ProductDAO {
         return product;
     }
 
-     /**
-     * Returns a list of all products stored in the database, or an error message
-     * with stack trace if an error occurs in the sql query
-     * 
-     * @return the list of all products stored in the database
-     */
-    public List<Product> list() {
+    public List<Product> listProducts() {
         EntityManager em = emf.createEntityManager();
         List<Product> products = new ArrayList<>();
 
@@ -66,99 +60,6 @@ public class ProductDAO {
         }
 
         return products;
-    }
-
-    /**
-     * Returns a product by its id
-     * 
-     * @param id the id of the product
-     * @return the product with the given id, or null if the product was not found
-     */
-    public Product findById(Integer id) {
-        EntityManager em = emf.createEntityManager();
-        Product product = new Product();
-
-        try {
-            String jpql = "SELECT p FROM Product p WHERE p.id = :id";
-            TypedQuery<Product> query = em.createQuery(jpql, Product.class);
-            query.setParameter("id", id);
-            product = query.getSingleResult();
-        } catch (ProductNotFoundException e) {
-            return null;
-        } catch (Exception e) {
-            return null;
-        } finally {
-            em.close();
-        }
-
-        return product;
-    }
-
-     /**
-     * Returns a product by its name
-     * 
-     * @param name the name of the product
-     * @return the product with the given name, or null if the product was not found
-     */
-    public Product findByName(String name) {
-        EntityManager em = emf.createEntityManager();
-        Product product;
-
-        try {
-            String jpql = "SELECT p FROM Product p WHERE p.name = :name";
-            TypedQuery<Product> query = em.createQuery(jpql, Product.class);
-            query.setParameter("name", name);
-            product = query.getSingleResult();
-            return product;
-        } catch (ProductNotFoundException e) {
-            return null;
-        } catch (Exception e) {
-            return null;
-        } finally {
-            em.close();
-        }
-    }
-
-     /**
-     * Updates a product in the database
-     * 
-     * @param id the id of the product that will be updated
-     * @param updatedProduct the new product data
-     * @return the updated product
-     */
-    public Product update(Integer id, ProductDTO updatedProduct) {
-        EntityManager em = emf.createEntityManager();
-        em.getTransaction().begin();
-        Product product = findById(id);
-        if (product != null) {
-            product.setName(updatedProduct.getName());
-            product.setDescription(updatedProduct.getDescription());
-            product.setValue(updatedProduct.getValue());
-
-            em.getTransaction().commit();
-        }
-        em.close();
-
-        return product;
-    }
-
-    /**
-     * Deletes a product from the database
-     * 
-     * @param id the id of the product that will be deleted
-     * @return true if the product was deleted, false if the product was not found
-     */
-    public boolean delete(Integer id) {
-        EntityManager em = emf.createEntityManager();
-        em.getTransaction().begin();
-        Product product = em.find(Product.class, id);
-        if (product != null) {
-            em.remove(product);
-            em.getTransaction().commit();
-            return true;
-        }
-        em.close();
-        return false;
     }
 
 }
