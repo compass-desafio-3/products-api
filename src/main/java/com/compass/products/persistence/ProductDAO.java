@@ -134,7 +134,7 @@ public class ProductDAO {
             product.setName(updatedProduct.getName());
             product.setDescription(updatedProduct.getDescription());
             product.setValue(updatedProduct.getValue());
-
+            em.merge(product);
             em.getTransaction().commit();
         }
         em.close();
