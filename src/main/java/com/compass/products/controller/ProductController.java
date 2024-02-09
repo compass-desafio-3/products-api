@@ -10,6 +10,7 @@ import com.compass.products.infrastructure.adapters.LocalDateTimeTypeAdapter;
 import com.compass.products.infrastructure.exceptions.CustomizedException;
 import com.compass.products.infrastructure.exceptions.ProductAlreadyDeletedException;
 import com.compass.products.infrastructure.exceptions.ProductAlreadyExistsException;
+import com.compass.products.infrastructure.exceptions.ProductNameBlankOrEmptyException;
 import com.compass.products.infrastructure.exceptions.ProductNotFoundException;
 import com.compass.products.service.ProductService;
 import com.google.gson.Gson;
@@ -79,6 +80,9 @@ public class ProductController {
     public String saveProduct(@Valid ProductDTO dto) {
         Product product;
         try {
+            if (dto.getName().isEmpty() || dto.getName().isBlank())
+                throw new ProductNameBlankOrEmptyException(400, "Name is blank or empty.");
+            
             product = productService.saveProduct(dto);
             return gson.toJson(product);
         } catch (ProductAlreadyExistsException e) {
@@ -89,6 +93,14 @@ public class ProductController {
 
             CustomizedException exception = new CustomizedException(e.getStatus(), "Bad Request", "Product already exists in the database.", details);
             return gson.toJson(exception);
+        } catch (ProductNameBlankOrEmptyException e) {
+            HashMap<String, String> details = new HashMap<String, String>() {{
+                put("field", "name");
+                put("message", e.getMessage());
+            }};
+
+            CustomizedException exception = new CustomizedException(e.getStatus(), "Bad Request", "Product name is blank or empty.", details);
+            return gson.toJson(exception);
         }
     }
 
@@ -98,6 +110,10 @@ public class ProductController {
 
         try {
             product = productService.updateProduct(id, dto);
+
+            if (product == null)
+                throw new ProductNotFoundException(404, "Product not found.");
+            
             return gson.toJson(product);
         } catch (ProductAlreadyExistsException e) {
             HashMap<String, String> details = new HashMap<String, String>() {{
@@ -107,7 +123,14 @@ public class ProductController {
 
             CustomizedException exception = new CustomizedException(e.getStatus(), "Bad Request", "Product already exists in the database.", details);
             return gson.toJson(exception);
-        }   
+        } catch (ProductNotFoundException e) {
+            HashMap<String, String> details = new HashMap<String, String>() {{
+                put("message", e.getMessage());
+            }};
+
+            CustomizedException exception = new CustomizedException(e.getStatus(), "Bad Request", "Product not found.", details);
+            return gson.toJson(exception);
+        }
     }
 
     // DELETE/{id}
